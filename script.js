@@ -14,8 +14,7 @@ const displayController = (() => {
         if (event.target.matches('.square')) {
           for(let i = 0; i < squares.length; i++) {
             if ( event.target.matches(`.square${i}`)) {
-              if (selectPlayer.winner() === false && event.target.innerHTML === '') {
-                console.log(selecPlayer.playerTurn())
+              if (!selectPlayer.winner() && !event.target.value) {
                 let newSelect
                 if (selectPlayer.playerTurn() === 'pX') {
                   newSelect = 'X'
@@ -25,10 +24,10 @@ const displayController = (() => {
                   newSelect = 'O'
                   selectText.innerHTML = 'Player 1 Turn'
                 }
-                gameBoard.gameState.splice(i, 1, newMark)
+                gameBoard.gameState.splice(i, 1, newSelect)
                 render()
               }
-              if (selectPlayer.winner) {
+              if (selectPlayer.winner()) {
                 selectText.innerHTML = selectPlayer.winner()
               }
             }
@@ -41,14 +40,14 @@ const displayController = (() => {
   function reset() {
     const restartBtn = document.querySelector('.restart')
     restartBtn.addEventListener('click', () => {
-      gameState = ["", "", "", "", "", "", "", "", ""]
+      gameBoard.gameState = ["", "", "", "", "", "", "", "", ""]
       selectText.innerHTML = "Player 1 Turn"
       render()
     })
   }
   function render() {
     const squares = document.querySelectorAll('.square')
-    for(let i = 0; i <= squares.length; i++) {
+    for(let i = 0; i < squares.length; i++) {
       squares[i].innerHTML = gameBoard.gameState[i]
     }
   }
@@ -60,8 +59,8 @@ const displayController = (() => {
 
 const player = () => {
   const playerTurn = () => {
-    const numX = countSelection().X
-    const numO = countSelection().O
+    const numX = countSelection().X;
+    const numO = countSelection().O;
     return (numX < numO || numX === numO) ? 'pX' : 'pO'
   }
 
@@ -82,35 +81,34 @@ const player = () => {
     const indicesOfX = getAllIndices(gameBoard.gameState, "X")
     const indicesOfO = getAllIndices(gameBoard.gameState, "O")
 
-    for (let x = 0; x < winningCondition.length; x++){
+    for (let x = 0; x < winningCondition.length; x++) {
       let numMatchedO = 0
       let numMatchedX = 0
       for (let i = 0; i < indicesOfX.length; i++) {
         for (let j = 0; j < winningCondition[x].length; j++) {
-          if (indicesofX[i] === winningCondition[x][j]) {
+          if (indicesOfX[i] === winningCondition[x][j]) {
             numMatchedX += 1
             if (numMatchedX === 3) {
               return "Player 1 Wins!"
             }
           }
           if (indicesOfO[i] === winningCondition[x][j]) {
-            numMatched += 1
+            numMatchedO += 1
             if (numMatchedO === 3) {
               return "Player 2 Wins!"
             }
           }
         }
       }
-      if (countSelection().X === 5 && countSelection().O === 4) {
-        return "Tie!"
-      }
-      return false
     }
+    if (countSelection().X === 5 && countSelection().O === 4) {
+        return "Tie!"
+    }
+    return false
   }
 
   function getAllIndices(arr, val) {
     let indexes = []
-      // i;
     for (let i = 0; i < arr.length; i++) {
       if (arr[i] === val) {
         indexes.push(i)
@@ -123,10 +121,15 @@ const player = () => {
     let numX = 0
     let numO = 0
     for (let i = 0; i < gameBoard.gameState.length; i++) {
-      return (gameBoard.gameState[i] === "X") ? numX += 1 : numO += 1
+      if (gameBoard.gameState[i] === 'X') {
+        numX += 1
+      }
+      if (gameBoard.gameState[i] === 'O') {
+        numO += 1
+      }
     }
 
-    return { X: numX, O: numO}
+    return { X: numX, O: numO }
   }
   return { playerTurn, winner}
 
