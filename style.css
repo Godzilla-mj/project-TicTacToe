@@ -22,6 +22,11 @@
 }
 
 .square {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6rem;
+  font-family: verdana, sans-serif;
   height: 95px;
   width: 95px;
   border: solid;
